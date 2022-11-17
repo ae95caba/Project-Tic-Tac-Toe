@@ -13,6 +13,9 @@ const PlayerFactory = function (name,team){
 
 let player= PlayerFactory("John","x");
 
+let player1;
+let player2;
+
 function displayAR(){
     for (let i = 0;i<9; i++){
         //console.log(document.getElementById(i))
@@ -69,4 +72,27 @@ function detectTie(){
     if (cellsFull == 9) {
         alert("is a tie");
     }
+}
+
+/////////////////////////////////////////////////////////
+//form
+
+const form = document.getElementById("myForm");
+const player1Name = document.getElementById("player-one");
+const player2Name = document.getElementById("player-two");
+const playerSelection = document.getElementById("player-selection");
+
+form.addEventListener("submit",function(e){
+    e.preventDefault();
+   
+    
+});
+
+form.addEventListener("submit",fun1);
+
+function fun1 (){
+    player1 = PlayerFactory(player1Name.value, "x");
+    player2 = PlayerFactory(player2Name.value,"o");
+    playerSelection.style.display = "none" 
+
 }
