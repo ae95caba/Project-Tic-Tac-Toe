@@ -4,12 +4,58 @@ gameboardHtml.style.display = "none"
 
 let winnerDetectedSwitch; 
 let gameboard = ["","","","","","","","",""];
-let Gameboard = {gameboard};
+
+let gaimeboard = (function(){
+    var board = ["","","","","","","","",""];
+    var outputBoard = function () {
+        for (let i = 0;i<9; i++){
+            //console.log(document.getElementById(i))
+            document.getElementById(i).innerText = gameboard[i];
+            
+        }
+    };
+
+    var markCell = function(e){
+        if(e.target.innerText){return}
+        else{
+            e.target.innerText = game.playerTurn;
+            
+            gameboard[e.target.id] = game.playerTurn;
+            detectWin(game.playerTurn);
+            detectTie()
+            game.SwitchTurn();
+        } 
+    };
+
+    var markCellGlobal = function(){
+        
+            for(let i = 0 ; i<9; i++){
+        
+                document.getElementById(i).addEventListener("click",mark);
+            }
+    };
+
+    var markCellGlobalRemove = function(){
+        for(let i = 0 ; i<9; i++){
+
+            document.getElementById(i).removeEventListener("click",mark);
+        }  
+    };
+
+    return{
+      gameboard, outputBoard,markCellGlobal,markCellGlobalRemove  
+    };
+
+})();
+
+
+
+
 let game={playerTurn: "x", SwitchTurn: function(){
     if(this.playerTurn =="x"){this.playerTurn= "o";}
     else{this.playerTurn = "x"};
 }, 
-    //turn
+    
 };
 
 const PlayerFactory = function (name,team){
