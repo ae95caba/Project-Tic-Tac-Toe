@@ -13,5 +13,9 @@ body{
 .cell{
     border: 2px solid blue;
     border-radius: 4px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
 
 }
