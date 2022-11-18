@@ -21,6 +21,7 @@ let player= PlayerFactory("John","x");
 let player1;
 let player2;
 
+//display the array's content in html
 function displayAR(){
     for (let i = 0;i<9; i++){
         //console.log(document.getElementById(i))
@@ -31,6 +32,7 @@ function displayAR(){
 
 displayAR();
 
+//places x or o in the clicked cell
 function mark(e){
     //console.log(e.target.innerText);
     if(e.target.innerText){return}
@@ -44,6 +46,7 @@ function mark(e){
     }
 }
 
+//add mark to the board
 function addMarkToBoard(){
     for(let i = 0 ; i<9; i++){
 
@@ -51,6 +54,7 @@ function addMarkToBoard(){
     }
 }
 
+//removes mark from board
 function removeMarkToBoard(){
     for(let i = 0 ; i<9; i++){
 
@@ -58,10 +62,11 @@ function removeMarkToBoard(){
     }
 }
 
-
+//defaul status
 addMarkToBoard();
 
 ////////////////////////////////////////////////
+
 
 function detectWin(player){
     if(
@@ -104,14 +109,16 @@ const player2Name = document.getElementById("player-two");
 const playerSelection = document.getElementById("player-selection");
 const startButton = document.getElementById("start");
 
+//disables submit refreshing page
 form.addEventListener("submit",function(e){
-    e.preventDefault();
-   
-    
+    e.preventDefault();   
 });
 
+//sets players names and team
+//clears the inputs
+//hides the form items
+//shows the gameboard
 form.addEventListener("submit",fun1);
-
 function fun1 (){
     player1 = PlayerFactory(player1Name.value, "x");
     player2 = PlayerFactory(player2Name.value,"o");
@@ -120,21 +127,26 @@ function fun1 (){
     playerSelection.style.display = "none" 
     gameboardHtml.style.display = "grid";
     startButton.style.display = "none";
-
-
 }
 
 //////////////////////////////////////////////////
 //reset and display
+
+
 const display = document.getElementById("display");
 const reset = document.getElementById("reset");
-reset.addEventListener("click",fun2);
 
+
+//resets board array and html
+//if a winner was detected re-adds mark to board
+//resets display
+
+reset.addEventListener("click",fun2);
 function fun2(){
     gameboard = ["","","","","","","","",""];
     displayAR();
     if(winnerDetectedSwitch){addMarkToBoard();};
     display.innerText = "";
-    //playerSelection.style.display = "block";
+    
 }
 
