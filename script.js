@@ -2,15 +2,19 @@ const gameboardHtml = document.getElementById("gameboard");
 gameboardHtml.style.display = "none"
 
 
-let winnerDetectedSwitch; 
-let gameboard = ["","","","","","","","",""];
+//this objetcs values will be set by  gaime.start..
+let playerOne; 
+let playerTwo;
+
 
 let gaimeboard = (function(){
+    
+
     var board = ["","","","","","","","",""];
     var outputBoard = function () {
         for (let i = 0;i<9; i++){
             //console.log(document.getElementById(i))
-            document.getElementById(i).innerText = gameboard[i];
+            document.getElementById(i).innerText = gaimeboard.board[i];
             
         }
     };
@@ -18,12 +22,13 @@ let gaimeboard = (function(){
     var markCell = function(e){
         if(e.target.innerText){return}
         else{
-            e.target.innerText = game.playerTurn;
+            e.target.innerText = gaime.teamTurn;
             
-            gameboard[e.target.id] = game.playerTurn;
-            detectWin(game.playerTurn);
-            detectTie()
-            game.SwitchTurn();
+            gaimeboard.board[e.target.id] = gaime.teamTurn;
+            gaime.detectTie()
+            gaime.detectWin(gaime.teamTurn);
+            
+            gaime.switchTurn();
         } 
     };
 
@@ -31,168 +36,143 @@ let gaimeboard = (function(){
         
             for(let i = 0 ; i<9; i++){
         
-                document.getElementById(i).addEventListener("click",mark);
+                document.getElementById(i).addEventListener("click",markCell);
             }
     };
 
     var markCellGlobalRemove = function(){
         for(let i = 0 ; i<9; i++){
 
-            document.getElementById(i).removeEventListener("click",mark);
+            document.getElementById(i).removeEventListener("click",markCell);
         }  
     };
 
     return{
-      gameboard, outputBoard,markCellGlobal,markCellGlobalRemove  
+      board, outputBoard,markCellGlobal,markCellGlobalRemove  
     };
 
 })();
 
 
 
+//////////////////////////////
+let gaime = (function(){
 
-let game={playerTurn: "x", SwitchTurn: function(){
-    if(this.playerTurn =="x"){this.playerTurn= "o";}
-    else{this.playerTurn = "x"};
-}, 
+   
+    const form = document.getElementById("myForm");
+    const player1Name = document.getElementById("player-one");
+    const player2Name = document.getElementById("player-two");
+    const playerSelection = document.getElementById("player-selection");
+    const startButton = document.getElementById("start");
+    const display = document.getElementById("display");
+    const reset = document.getElementById("reset");
+
+    var preventDefault = function(){
+        
+        form.addEventListener("submit",function(e){
+            e.preventDefault();   
+        });
+    }
+
+    var enableStart = function (){
+
+        form.addEventListener("submit",startGame);
+        function startGame (){
+            playerOne = PlayerFactory(player1Name.value, "x");
+            playerTwo = PlayerFactory(player2Name.value,"o");
+            player1Name.value="";
+            player2Name.value="";
+            playerSelection.style.display = "none" 
+            gameboardHtml.style.display = "grid";
+            startButton.style.display = "none";
+        }
+
+    }
+
+    var enableReset = function(){
+
+        reset.addEventListener("click",resetGame);
+        function resetGame(){
+            gaimeboard.board = ["","","","","","","","",""];
+            gaimeboard.outputBoard();
+            if(gaime.winnerDetectedSwitch){gaimeboard.markCellGlobal();};
+            display.innerText = "";
     
-};
+        }
+    }
+
+    var teamTurn = "x";
+
+    var switchTurn = function (){
+        if(gaime.teamTurn ==playerOne.team){gaime.teamTurn= playerTwo.team;}
+        else{gaime.teamTurn = playerOne.team};
+    }
+
+    var winnerDetectedSwitch = false;
+
+    var detectWin = function (player){
+        if(
+            gaimeboard.board[0] == player && gaimeboard.board[1] == player && gaimeboard.board[2] == player ||
+            gaimeboard.board[3] == player && gaimeboard.board[4] == player && gaimeboard.board[5] == player ||
+            gaimeboard.board[6] == player && gaimeboard.board[7] == player && gaimeboard.board[8] == player ||
+            ///////////////////////////////////////////////////
+            gaimeboard.board[0] == player && gaimeboard.board[3] == player && gaimeboard.board[6] == player ||
+            gaimeboard.board[1] == player && gaimeboard.board[4] == player && gaimeboard.board[7] == player ||
+            gaimeboard.board[2] == player && gaimeboard.board[5] == player && gaimeboard.board[8] == player ||
+            ///////////////////////////////////////////////////
+            gaimeboard.board[0] == player && gaimeboard.board[4] == player && gaimeboard.board[8] == player ||
+            gaimeboard.board[2] == player && gaimeboard.board[4] == player && gaimeboard.board[6] == player 
+            ){
+                display.innerText = `${player} won the game`;
+                gaimeboard.markCellGlobalRemove();
+               gaime.winnerDetectedSwitch = true;
+            }
+    }
+
+    var detectTie = function (){
+        let cellsFull = 0
+        for(let i = 0; i<9; i++){
+            if(gaimeboard.board[i]){cellsFull++;};
+        }
+        if (cellsFull == 9) {
+            display.innerText="is a tie";    
+        }
+    }
+
+    return {preventDefault, enableStart, enableReset,detectWin,detectTie,switchTurn, teamTurn, winnerDetectedSwitch};
+
+}) ();
+////////////////////////////////
 
 const PlayerFactory = function (name,team){
     return {name,team};
 }
 
-let player= PlayerFactory("John","x");
-
-let player1;
-let player2;
-
-//display the array's content in html
-function displayAR(){
-    for (let i = 0;i<9; i++){
-        //console.log(document.getElementById(i))
-        document.getElementById(i).innerText = gameboard[i];
-        
-    }
-}
-
-displayAR();
-
-//places x or o in the clicked cell
-function mark(e){
-    //console.log(e.target.innerText);
-    if(e.target.innerText){return}
-    else{
-        e.target.innerText = game.playerTurn;
-        
-        gameboard[e.target.id] = game.playerTurn;
-        detectWin(game.playerTurn);
-        detectTie()
-        game.SwitchTurn();
-    }
-}
-
-//add mark to the board
-function addMarkToBoard(){
-    for(let i = 0 ; i<9; i++){
-
-        document.getElementById(i).addEventListener("click",mark);
-    }
-}
-
-//removes mark from board
-function removeMarkToBoard(){
-    for(let i = 0 ; i<9; i++){
-
-        document.getElementById(i).removeEventListener("click",mark);
-    }
-}
 
 //defaul status
-addMarkToBoard();
-
-////////////////////////////////////////////////
-
-
-function detectWin(player){
-    if(
-    gameboard[0] == player && gameboard[1] == player && gameboard[2] == player ||
-    gameboard[3] == player && gameboard[4] == player && gameboard[5] == player ||
-    gameboard[6] == player && gameboard[7] == player && gameboard[8] == player ||
-    ///////////////////////////////////////////////////
-    gameboard[0] == player && gameboard[3] == player && gameboard[6] == player ||
-    gameboard[1] == player && gameboard[4] == player && gameboard[7] == player ||
-    gameboard[2] == player && gameboard[5] == player && gameboard[8] == player ||
-    ///////////////////////////////////////////////////
-    gameboard[0] == player && gameboard[4] == player && gameboard[8] == player ||
-    gameboard[2] == player && gameboard[4] == player && gameboard[6] == player 
-    ){
-        display.innerText = `${player} won the game`;
-        removeMarkToBoard();
-        winnerDetectedSwitch = true;
-        }
-    };
-
-
-function detectTie(){
-    let cellsFull = 0
-    for(let i = 0; i<9; i++){
-        if(gameboard[i]){cellsFull++;};
-    }
-    if (cellsFull == 9) {
-        
-        display.innerText="is a tie";
-         
-    }
-}
+gaimeboard.markCellGlobal();
 
 /////////////////////////////////////////////////////////
 //form
 
-const form = document.getElementById("myForm");
-const player1Name = document.getElementById("player-one");
-const player2Name = document.getElementById("player-two");
-const playerSelection = document.getElementById("player-selection");
-const startButton = document.getElementById("start");
 
 //disables submit refreshing page
-form.addEventListener("submit",function(e){
-    e.preventDefault();   
-});
-
-//sets players names and team
-//clears the inputs
-//hides the form items
-//shows the gameboard
-form.addEventListener("submit",fun1);
-function fun1 (){
-    player1 = PlayerFactory(player1Name.value, "x");
-    player2 = PlayerFactory(player2Name.value,"o");
-    player1Name.value="";
-    player2Name.value="";
-    playerSelection.style.display = "none" 
-    gameboardHtml.style.display = "grid";
-    startButton.style.display = "none";
-}
+gaime.preventDefault();
 
 //////////////////////////////////////////////////
 //reset and display
 
 
-const display = document.getElementById("display");
-const reset = document.getElementById("reset");
+
 
 
 //resets board array and html
 //if a winner was detected re-adds mark to board
 //resets display
-
-reset.addEventListener("click",fun2);
-function fun2(){
-    gameboard = ["","","","","","","","",""];
-    displayAR();
-    if(winnerDetectedSwitch){addMarkToBoard();};
-    display.innerText = "";
-    
-}
+gaime.enableReset();
+//sets players names and team
+//clears the inputs
+//hides the form items
+//shows the gameboard
+gaime.enableStart();
 
